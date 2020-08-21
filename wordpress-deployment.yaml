@@ -1,0 +1,54 @@
+apiVersion: extensions/v1
+kind: Deployment
+metadata:
+  labels:
+    app: wordpress-site
+  name: wordpress-site
+  namespace: development
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: wordpress-site
+      tier: frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: wordpress-site
+        tier: frontend
+    spec:
+      volumes:
+      - configMap:
+          defaultMode: 256
+          name: nginxthroughpass
+          optional: false
+        name: nginxconf
+      - name: shared-files
+        emptyDir: {}
+      containers:
+        - name: app
+          image: <REPLACE WITH DOCKER PHP-FPM IMAGE URL>
+          imagePullPolicy : IfNotPresent
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+          envFrom:
+            - configMapRef:
+                name: wordpress-configmap
+        - name: nginx
+          image: nginx
+          imagePullPolicy : IfNotPresent
+          volumeMounts:
+          - name: shared-files
+            mountPath: /var/www/html
+          - mountPath: /etc/nginx/conf.d
+            name: nginxconf
+            readOnly: true

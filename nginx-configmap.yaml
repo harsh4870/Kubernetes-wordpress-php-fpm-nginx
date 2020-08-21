@@ -1,0 +1,26 @@
+#nginx configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginxthroughpass
+  namespace: development
+data:
+  default.conf: |-
+    server {
+            listen 80 default_server;
+            root /var/www/html;
+            server_name  _;
+            index index.php;
+            location / {
+                try_files $uri $uri/ /index.php?$args;
+            }
+
+            location ~ \.php$ {
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass 127.0.0.1:9000;
+                fastcgi_index index.php;
+                include fastcgi_params;
+                fastcgi_param   PATH_INFO       $fastcgi_path_info;
+                fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            }
+        }

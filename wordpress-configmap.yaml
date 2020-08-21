@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  WP_WT_MYSQL_DB: wordpress
+  WP_WT_MYSQL_HOST: 192.168.1.2
+  WP_WT_MYSQL_PASSWORD: password
+  WP_WT_MYSQL_USER: root
+kind: ConfigMap
+metadata:
+  name: wordpress-configmap
+  #use if wordpress taking db via environment variable

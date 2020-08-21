@@ -1,0 +1,21 @@
+piVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: wordpress-site
+  name: wordpress-site
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    port: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: wordpress-site
+    tier: frontend
+  sessionAffinity: None
+  type: ClusterIP
